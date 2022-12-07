@@ -3,9 +3,11 @@ import { IoClose } from 'react-icons/io5'
 import CustomCalendar from './CustomCalendar'
 import Input from './Input'
 import { useUserData } from '../context/data'
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, collection, addDoc } from 'firebase/firestore';
 import { db, fetchData } from '../context/firebase_config';
 import CustomSelect from './CustomSelect'
+import TextEditor from './TextEditor'
+import Button from './Button';
 
 const CreateDriveModal = ({ showModal, setShowModal, setMessage, getDate }) => {
 	const companyLogo = useRef();
@@ -21,24 +23,51 @@ const CreateDriveModal = ({ showModal, setShowModal, setMessage, getDate }) => {
 
 	const [dateofdrive, setDateofdrive] = useState(getDate("normal"));
 	const initialFormState = {
-		companyId: "",
-		companyName: "",
-		hr1name: "",
-		hr1contact: "",
-		hr1email: "",
-		hr2name: "",
-		hr2contact: "",
-		hr2email: "",
-		companyCity: "",
-		companyState: "",
-		companyAddress: "",
-		companyPincode: "",
-		companyNumber: "",
-		companyEmail: "",
+		drivename: "",
+		driveid: "",
+		package: "",
+		openings: 0,
+		joblocation: ""
 	}
 
 	const [formState, setFormState] = useState(initialFormState)
 	const [displayCalender, setDisplayCalender] = useState(false)
+	const [content, setContent] = useState("")
+	const [year, setYear] = useState([])
+	const [branch, setBranch] = useState([])
+	const [loading, setLoading] = useState(false)
+	const [aptitude, setAptitude] = useState(false)
+	const [gd, setGD] = useState(false)
+	const [active, setActive] = useState(false)
+	const [jobPost, setJobPost] = useState()
+	const [campustype, setCampusType] = useState()
+
+	const handleSubmit = async () => {
+		if (formState.driveid && campustype && active && branch && year) {
+			setLoading(true)
+			const docRef = await addDoc(collection(db, "drives"), {
+				...formState, branch: branch && branch.map((data) => {
+					return data.value
+				}), dateofdrive, year: year && year.map((data) => {
+					return data.value
+				}), content, companyId: companyData && companyData.companyId, aptitude: aptitude && aptitude.value, gd: gd && gd.value, active: active && active.value, campustype: campustype && campustype.value, jobPost: jobPost && jobPost.value
+			})
+				.then(() => {
+					setLoading(false)
+					setShowModal(false)
+					setActive(false)
+					setYear([])
+					setBranch([])
+					setFormState(initialFormState)
+					setGD(false)
+					setAptitude(false)
+					setContent("")
+					setMessage("Drive Created Successfully!")
+				})
+		} else {
+			setMessage("Please specify the drive id")
+		}
+	}
 
 	const handleChange = (e) => {
 		setFormState({
@@ -87,9 +116,10 @@ const CreateDriveModal = ({ showModal, setShowModal, setMessage, getDate }) => {
 					<input type="file" ref={companyLogo} className="hidden" />
 				</div>
 				<div className='grid grid-cols-2 gap-x-10 gap-y-5 mt-5 px-4'>
-					<Input label={"Drive Name"} placeholder={"Enter Name of drive"} readOnly={false} id="name" value={""} />
+					<Input changeHandler={handleChange} label={"Drive Id"} placeholder={"Enter ID of drive"} readOnly={false} id="driveid" value={formState.driveid} />
+					<Input changeHandler={handleChange} label={"Drive Name"} placeholder={"Enter Name of drive"} readOnly={false} id="drivename" value={formState.drivename} />
 					<CustomSelect label="Company" handleChange={handleCompanyChange} id="company" options={companyDropdown.map((company) => {
-						return { label: `${company.companyName}, ${company.companyCity}`, value: company.id }
+						return { label: `${company.companyName}, ${company.companyCity}`, value: company.id,}
 					})} />
 					<div className={'flex flex-col '}>
 						<label htmlFor={"dod"} className=' mb-1 font-semibold cursor-pointer'>{"Date Of Drive"}: </label>
@@ -99,12 +129,25 @@ const CreateDriveModal = ({ showModal, setShowModal, setMessage, getDate }) => {
 					<Input disabled={disabled} label={"Company Id"} placeholder={"Enter Company ID"} readOnly={true} id="companyId" value={companyData && companyData.companyId} />
 					<Input disabled={disabled} label={"Company Name"} placeholder={"Enter Company Name"} readOnly={true} id="companyName" value={companyData && companyData.companyName} />
 					<Input disabled={disabled} label={"Company Location"} placeholder={"Enter Company Location"} readOnly={true} id="companyLocation" value={companyData && companyData.companyCity} />
-					<CustomSelect label="Job Posting" handleChange={(e) => { console.log(e) }} disabled={disabled} id="jobposting" options={companyData && companyData.jobs && companyData.jobs.map((job) => {
+					<CustomSelect label="Job Posting" handleChange={(e) => { setJobPost(e) }} disabled={disabled} id="jobposting" options={companyData && companyData.jobs && companyData.jobs.map((job) => {
 						return { label: job, value: job }
 					})} />
-					<Input disabled={disabled} label={"Package"} placeholder={"Enter Package"} readOnly={false} id="package" value={""} />
-					<CustomSelect label="Active" handleChange={(e) => { console.log(e) }} disabled={disabled} id="active" defaultValue={{ label: "Active", value: true }} options={[{ label: "Active", value: true }, { label: "Inactive", value: false }]} />
+					<CustomSelect label="Campus type" handleChange={(e) => { setCampusType(e) }} disabled={disabled} id="campustype" options={[{ label: "On Campus", value: true }, { label: "Off Campus", value: false }]} />
+					<Input disabled={disabled} label={"Job Location"} placeholder={"Enter Job Location"} readOnly={false} id="joblocation" value={formState.joblocation} changeHandler={handleChange} />
+					<Input disabled={disabled} label={"Package"} placeholder={"Enter Package"} readOnly={false} id="package" value={formState.package} changeHandler={handleChange} />
+					<Input disabled={disabled} label={"Number Of Openings"} placeholder={"Enter Number Of Openings"} readOnly={false} id="openings" value={formState.openings} changeHandler={handleChange} />
+					<CustomSelect isMulti={true} label="Year" handleChange={(e) => { setYear(e) }} disabled={disabled} id="year" options={[{ label: "Third Year", value: "Third Year" }, { label: "Fourth Year", value: "Fourth Year" }]} />
+					<CustomSelect isMulti={true} label="Branch" handleChange={(e) => { setBranch(e) }} disabled={disabled} id="branch" options={[{ label: "Computer", value: "computer" }, { label: "AI-ML", value: "aiml" }, { label: "IOT", value: "iot" }, { label: "Electrical", value: "electrical" }]} />
+					<CustomSelect label="Active" handleChange={(e) => { setActive(e) }} disabled={disabled} id="active" options={[{ label: "Active", value: true }, { label: "Inactive", value: false }]} />
+					<div className='grid grid-cols-2 gap-x-6'>
+						<CustomSelect label="Aptitude Test" handleChange={(e) => { setAptitude(e) }} disabled={disabled} id="aptitude" options={[{ label: "Yes", value: true }, { label: "No", value: false }]} />
+						<CustomSelect label="Group Discussion" handleChange={(e) => { setGD(e) }} disabled={disabled} id="groupdiscussion" options={[{ label: "Yes", value: true }, { label: "No", value: false }]} />
+					</div>
+					<div className='py-3 col-span-2'>
+						<TextEditor label="Drive Description" setValue={setContent} value={content} />
+					</div>
 				</div>
+				<div className='flex justify-center mt-3'><Button handler={handleSubmit} loading={loading} text="Create" /></div>
 			</div>
 		</>
 	)

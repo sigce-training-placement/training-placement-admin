@@ -9,7 +9,7 @@ import { useUserData } from '../../context/data'
 
 export default function AdminHome({ setMessage, getDate }) {
 	const { userData } = useUserAuth();
-	const { companyArr, studentArr } = useUserData()
+	const { companyArr, studentArr, driveArr } = useUserData()
 	return (
 		<>
 			<Navbar />
@@ -20,7 +20,7 @@ export default function AdminHome({ setMessage, getDate }) {
 						30/400
 					</div>
 					<div className='flex-wrap rounded-lg py-4 w-full flex justify-center gap-5'>
-						<DashboardCard number={31} text={"Drives"} />
+						<DashboardCard number={driveArr.length} text={"Drives"} />
 						<DashboardCard number={studentArr.length} text={"Students"} />
 						<DashboardCard number={companyArr.length} text={"Companies"} />
 						<DashboardCard number={89} text={"Selected"} />

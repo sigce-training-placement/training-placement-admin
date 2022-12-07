@@ -5,19 +5,24 @@ import Button from './Button'
 const PageHeader = ({ searchBar, data, setData, getDate, buttoncomponent }) => {
 	const { userData } = useUserAuth()
 	const [search, setSearch] = useState("")
-	useEffect(() => {
-		let resultData = data || [];
-		if (typeof (setData) === "function") {
-			resultData = data && data.filter((obj) => {
-				if (obj.companyName) {
-					return obj.companyName.toLowerCase().includes(search.toLowerCase()) || obj.companyCity.toLowerCase().includes(search.toLowerCase()) || obj.hr1name.toLowerCase().includes(search.toLowerCase()) || obj.companyId.toLowerCase().includes(search.toLowerCase()) || obj.jobs.includes(search)
-				} else if (obj.role === "student") {
-					return obj.branch.toLowerCase().includes(search.toLowerCase()) || obj.firstname.toLowerCase().includes(search.toLowerCase()) || obj.gender.toLowerCase().includes(search.toLowerCase()) || obj.lastname.toLowerCase().includes(search.toLowerCase()) || obj.location.toLowerCase().includes(search.toLowerCase()) || obj.regno.toLowerCase().includes(search.toLowerCase()) || obj.email.toLowerCase().includes(search.toLowerCase())
-				}
-			})
-			setData(resultData)
-		}
-	}, [search]);
+	// useEffect(() => {
+	// 	let resultData = data || [];
+	// 	console.log(data)
+	// 	if (typeof (setData) === "function") {
+	// 		resultData = data && data.filter((obj) => {
+	// 			if (search.length === 0) {
+	// 				setData(data)
+	// 			} else {
+	// 				if (obj.companyName) {
+	// 					return obj.companyName.toLowerCase().includes(search.toLowerCase()) || obj.companyCity.toLowerCase().includes(search.toLowerCase()) || obj.hr1name.toLowerCase().includes(search.toLowerCase()) || obj.companyId.toLowerCase().includes(search.toLowerCase()) || obj.jobs.includes(search)
+	// 				} else if (obj && obj.role === "student") {
+	// 					return obj.branch.toLowerCase().includes(search.toLowerCase()) || obj.firstname.toLowerCase().includes(search.toLowerCase()) || obj.gender.toLowerCase().includes(search.toLowerCase()) || obj.lastname.toLowerCase().includes(search.toLowerCase()) || obj.location.toLowerCase().includes(search.toLowerCase()) || obj.regno.toLowerCase().includes(search.toLowerCase()) || obj.email.toLowerCase().includes(search.toLowerCase())
+	// 				}
+	// 			}
+	// 		})
+	// 		setData(resultData)
+	// 	}
+	// }, [search]);
 	return (
 		<>
 			<header className='flex items-center justify-between h-28'>

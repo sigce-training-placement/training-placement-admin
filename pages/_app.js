@@ -61,11 +61,20 @@ function MyApp({ Component, pageProps }) {
     const dateObj = new Date();
     if (format === undefined) {
       return `Today, ${moment(dateObj).format("DD MMM YYYY")}`
-    } else if(format === "normal"){
+    } else if (format === "normal") {
       return `${dateObj.getFullYear()}-${dateObj.getMonth() + 1}-${dateObj.getDate()}`
     }
   }
-
+  useEffect(() => {
+    window.addEventListener('contextmenu', (e) => {
+      e.preventDefault()
+    })
+    return () => {
+      window.removeEventListener('contextmenu', (e) => {
+        e.preventDefault()
+      })
+    };
+  }, []);
   return (
     <>
       <div className={routing ? 'h-screen w-screen duration-500 bg-white z-[3000] fixed top-0 left-0 opacity-100' : 'h-screen w-screen duration-500 bg-white z-[3000] fixed top-0 left-0 opacity-0 pointer-events-none'}></div>

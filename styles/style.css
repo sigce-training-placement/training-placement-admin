@@ -9,7 +9,6 @@
 body {
   font-family: 'Nunito', sans-serif;
   font-family: 'Montserrat', sans-serif;
-  /* font-family: 'Roboto', sans-serif; */
 }
 
 .Montserrat {
@@ -88,4 +87,31 @@ input[type=number] {
 .css-1pahdxg-control{
   border: none !important;
   box-shadow: none !important;
+}
+
+.ql-toolbar.ql-snow {
+  border: 0 !important;
+  border-bottom: 1px solid #eee;
+  /* overflow: hidden; */
+}
+
+.ql-container.ql-snow{
+  border: 0 !important;
+  overflow-y: scroll;
+}
+
+.ql-editor{
+  position: relative;
+  z-index: 0;
+}
+
+.quill {
+  overflow: hidden;
+}
+
+h1{
+  font-size: 32 pt !important;
+}
+h2{
+  font-size: 26pt;
 }

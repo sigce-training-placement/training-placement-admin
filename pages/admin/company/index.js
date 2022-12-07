@@ -31,7 +31,7 @@ const Company = ({ getDate, setMessage}) => {
 							</div>
 							<div className='text-center grid grid-cols-1'>
 								{
-									result.map((company) => {
+									companyArr.map((company) => {
 										return <Link href={`company/${company.id}`} key={company.id} className="grid grid-cols-4 py-3 border-b">
 											<div>{company.companyId}</div>
 											<div>{company.companyName}</div>
